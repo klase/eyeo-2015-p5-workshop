@@ -25,7 +25,7 @@ function setup() {
 
   frequencyCircles.push(new FrequencyCircle({
     radiusOffset : 0,
-    totalParticles: 30,
+    totalParticles: 40,
     minTotalParticles: 20,
     laserRange: 150,
     frequency: 'bass'
@@ -34,7 +34,7 @@ function setup() {
   frequencyCircles.push(new FrequencyCircle({
     radiusOffset : 0,
     totalParticles: 10,
-    laserRange: 100,
+    laserRange: 120,
     frequency: 'mid'
   }));
 
@@ -151,7 +151,7 @@ LaserEmitter.prototype.draw = function() {
       strokeWeight(1);
       for (var b = 0; b < frequencyCircles[a].particles.length; b++) {
         var distance = this.particles[i].pos.dist(frequencyCircles[a].particles[b].pos);
-        var opacity = Math.abs(map(distance, 0, frequencyCircles[a].laserRange, 255, 50));
+        var opacity = Math.abs(map(distance, 0, frequencyCircles[a].laserRange, 230, 0));
         //console.log(opacity);
         stroke(currentHue,255,255, opacity);
         if (distance <= frequencyCircles[a].laserRange) {
@@ -167,7 +167,7 @@ var FrequencyCircle = function(settings) {
   this.totalParticles = settings.totalParticles || 20;
   this.maxTotalParticles = settings.maxTotalParticles || settings.totalParticles || 10;
   this.minTotalParticles = settings.minTotalParticles || 5;
-  this.particleRadius = settings.particleRadius || 2;
+  this.particleRadius = settings.particleRadius || 4;
   this.radiusOffset = settings.radiusOffset || 0;
   this.frequency = settings.frequency || 'bass';
   this.laserRange = settings.laserRange || 150;
