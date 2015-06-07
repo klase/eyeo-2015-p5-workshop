@@ -1,27 +1,36 @@
 <html>
 <head>
+  
   <script language="javascript" type="text/javascript" src="p5.js"></script>
   <script language="javascript" src="addons/p5.sound.js"></script>
   <script language="javascript" type="text/javascript" src="sketch.js"></script>
   <style> body {padding: 0; margin: 0;font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
    font-weight: 300;}
-	.track {
-		position: absolute;
-		bottom: 10px;
-		color: white;
-		width: 100%;
-		text-align: center;
-	}
-
-	.track a {
+	.mouse-toggle {
 		color: white;
 		text-decoration: none;
+	}
+
+	.info {
+		position: absolute;
+		width: 100%;
+		bottom: 12px;
+		text-align: center;
+		font-size: 12px;
+		line-height: 20px;
 	}
   </style>
 </head>
 
 <body>
 
-	
+	<div class="info"><a class="mouse-toggle" href="#">Mouse controls: <span id="mouseControlled">OFF</span></a></div>
+	<script>
+		document.querySelector('.mouse-toggle').addEventListener('click', function(e) {
+			e.preventDefault();
+			mouseControlled = !mouseControlled;
+			document.getElementById('mouseControlled').innerHTML = mouseControlled ? 'ON<br>(Use mouse pointer and scrollwheel to manipulate)' : 'OFF';
+		});
+	</script>
 </body>
 </html>

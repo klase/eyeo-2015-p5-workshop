@@ -1,7 +1,7 @@
 var cx, cy, frequencyCircles, laserEmitters, tune, fft, spectrum;
 var mouseControlled = false;
 var currentHue = 0;
-var hueSpeed = 0.1;
+var hueSpeed = 0.3;
 var currentAlpha = 0;
 var spinThreshold = 210;
 
@@ -25,7 +25,7 @@ function setup() {
 
   frequencyCircles.push(new FrequencyCircle({
     radiusOffset : 0,
-    totalParticles: 40,
+    totalParticles: 40, 
     minTotalParticles: 20,
     laserRange: 150,
     frequency: 'bass'
@@ -59,9 +59,18 @@ function setup() {
     radius: 30,
     speed: 0.2,
     rotationSpeed: -0.01,
-    particleRadius: 2,
+    particleRadius: 1,
     rotation: 0.9
   }));
+
+  laserEmitters.push(new LaserEmitter({
+    radius: 200,
+    speed: 0.1,
+    rotationSpeed: 0.03,
+    particleRadius: 1,
+    rotation: 0.9
+  }));
+
 
 }
 
@@ -69,7 +78,7 @@ function draw() {
   background(0);
   spectrum = fft.analyze();
   currentHue += hueSpeed;
-  if (currentHue > 255 || currentHue <=0) {
+  if (currentHue >= 255 || currentHue <=0) {
     hueSpeed = hueSpeed *-1;
   }
 
@@ -85,7 +94,7 @@ function draw() {
 function mouseWheel(event) {
   event.preventDefault();
   if (mouseControlled) {
-    laserEmitters[0].radius = constrain(event.deltaY+laserEmitters[0].radius, 21, 250);
+    laserEmitters[0].radius = constrain(event.deltaY+laserEmitters[0].radius, 21, 400);
   }
 }
 
@@ -97,6 +106,9 @@ var LaserEmitter = function(settings) {
   this.rotationSpeed = settings.rotationSpeed || 0.01;
   this.rotation = settings.rotation || 0;
   this.primary = settings.primary || false;
+  this.colour = settings.colour || '255, 255,255, 255';
+  this.minRadius = settings.minRadius || 20;
+  this.maxRadius = settings.maxRadius || 250;
   this.setup();
 }
 
@@ -111,7 +123,8 @@ LaserEmitter.prototype.setup = function() {
 }
 
 LaserEmitter.prototype.randomize = function() {
-  this.totalParticles = Math.round(random(3,20));
+  this.totalParticles = Math.round(random(8,20));
+  this.rotationSpeed = random(-0.05, 0.05);
   this.setup();
 }
 
@@ -141,14 +154,16 @@ LaserEmitter.prototype.draw = function() {
   for (var i = 0; i < this.particles.length; i++) {
     var angle = i * 2 * Math.PI / this.totalParticles + this.rotation;
     this.particles[i].pos = createVector((centerX + Math.cos(angle) * this.radius) - this.particleRadius / 2, (centerY + Math.sin(angle) * this.radius) - this.particleRadius / 2);
-    ellipse(this.particles[i].pos.x, this.particles[i].pos.y, this.particleRadius, this.particleRadius);
+    if (mouseControlled) {
+      ellipse(this.particles[i].pos.x, this.particles[i].pos.y, this.particleRadius, this.particleRadius);
+    }
 
     for (var a = 0; a < frequencyCircles.length; a++) {
      // var radiusDistance = Math.abs(this.radius-frequencyCircles[a].radius);
       //if (radiusDistance >= frequencyCircles[a].laserRange) {
       //  continue;
       //}
-      strokeWeight(1);
+      strokeWeight(2);
       for (var b = 0; b < frequencyCircles[a].particles.length; b++) {
         var distance = this.particles[i].pos.dist(frequencyCircles[a].particles[b].pos);
         var opacity = Math.abs(map(distance, 0, frequencyCircles[a].laserRange, 230, 0));
@@ -167,7 +182,7 @@ var FrequencyCircle = function(settings) {
   this.totalParticles = settings.totalParticles || 20;
   this.maxTotalParticles = settings.maxTotalParticles || settings.totalParticles || 10;
   this.minTotalParticles = settings.minTotalParticles || 5;
-  this.particleRadius = settings.particleRadius || 4;
+  this.particleRadius = settings.particleRadius || 1;
   this.radiusOffset = settings.radiusOffset || 0;
   this.frequency = settings.frequency || 'bass';
   this.laserRange = settings.laserRange || 150;
@@ -176,7 +191,6 @@ var FrequencyCircle = function(settings) {
 
 FrequencyCircle.prototype.randomize = function() {
   this.totalParticles = Math.round(random(this.minTotalParticles, this.maxTotalParticles));
-  this.laserRange = Math.round(random(50,200));
   this.setup();
 }
 
@@ -202,6 +216,8 @@ FrequencyCircle.prototype.draw = function() {
   for (var i = 0; i < this.particles.length; i++) {
     var angle = i * 2 * Math.PI / this.totalParticles;
     this.particles[i].pos = createVector((cx + Math.cos(angle) * this.radius) - this.particleRadius / 2, (cy + Math.sin(angle) * this.radius) - this.particleRadius / 2);
-    ellipse(this.particles[i].pos.x, this.particles[i].pos.y, this.particleRadius, this.particleRadius);
+    if (mouseControlled) {
+      ellipse(this.particles[i].pos.x, this.particles[i].pos.y, this.particleRadius, this.particleRadius);
+    }
   }
 }
